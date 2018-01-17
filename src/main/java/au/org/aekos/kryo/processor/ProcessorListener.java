@@ -20,7 +20,6 @@ import au.org.aekos.kryo.JsonWrapper;
 public class ProcessorListener implements ItemProcessListener<Entity, JsonWrapper> {
 
 	private static final Logger logger = LoggerFactory.getLogger(ProcessorListener.class);
-    private int errorCounter = 0;
     private int processedCounter = 0;
     private boolean isTotalCounted = false;
     private int totalRecords = 0;
@@ -51,10 +50,18 @@ public class ProcessorListener implements ItemProcessListener<Entity, JsonWrappe
 			double donePercent = 100.0 * processedCounter / totalRecords;
 			long elapsedMs = new Date().getTime() - startMs;
 			String duration = DurationFormatUtils.formatDurationHMS(elapsedMs);
-			String template = "Processed %d/%d (%3.1f%%) records so far, taken %s, %dms per 1000 records on average";
-			long msPerThousandRecords = elapsedMs / (processedCounter * 1000);
-			logger.info(String.format(template, processedCounter, totalRecords, donePercent, duration, msPerThousandRecords));
+			double msPerThousandRecords = elapsedMs / (processedCounter / 1000.0);
+			long remainingMs = calcRemainingMs(processedCounter, totalRecords, elapsedMs);
+			String remaining = DurationFormatUtils.formatDurationHMS(remainingMs);
+			String template = "Processed %d/%d (%3.1f%%), elapsed %s, remaining %s, avg %1.0fms/1000 records";
+			logger.info(String.format(template, processedCounter, totalRecords, donePercent, duration, remaining, msPerThousandRecords));
 		}
+	}
+
+	static long calcRemainingMs(int processed, int total, long elapsedMs) {
+		int remainingRecords = total - processed;
+		long msPerRecordProcessed = elapsedMs / processed;
+		return remainingRecords * msPerRecordProcessed;
 	}
 
 	private void initTotal() {
@@ -67,10 +74,6 @@ public class ProcessorListener implements ItemProcessListener<Entity, JsonWrappe
 
 	@Override
 	public void onProcessError(Entity item, Exception e) { }
-	
-	public int getErrorCounter() {
-		return errorCounter;
-	}
 
 	public int getProcessedCounter() {
 		return processedCounter;

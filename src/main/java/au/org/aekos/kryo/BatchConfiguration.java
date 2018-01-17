@@ -26,9 +26,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
-import org.springframework.core.task.SyncTaskExecutor;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.util.StreamUtils;
@@ -48,11 +45,11 @@ public class BatchConfiguration {
     @Autowired
     public StepBuilderFactory stepBuilderFactory;
 
-    @Value("${kryo-crawler.is-async:false}") private boolean isAsync;
     @Value("${kryo-crawler.jdbc.url}") private String jdbcUrl;
     @Value("${kryo-crawler.jdbc.user}") private String jdbcUser;
     @Value("${kryo-crawler.jdbc.password}") private String jdbcPassword;
     @Value("${kryo-crawler.jdbc.fetch-size:0}") private int jdbcFetchSize;
+    @Value("${kryo-crawler.chunk-size:1}") private int chunkSize;
     
     @Bean
     public ItemReader<Entity> reader(String allEntitiesQuery, @Qualifier("aekosDataSource") DataSourceWrapper aekosDataSource, RowMapper<Entity> entityRowMapper) {
@@ -92,16 +89,6 @@ public class BatchConfiguration {
 		return result;
     }
     
-    @Bean
-    public TaskExecutor taskExecutor() {
-    	if (isAsync) {
-    		SimpleAsyncTaskExecutor result = new SimpleAsyncTaskExecutor("kryoData");
-    		result.setConcurrencyLimit(4);
-			return result; // Consider changing to ThreadPoolTaskExecutor
-    	}
-    	return new SyncTaskExecutor();
-    }
-    
 	@Bean
     public Job apiDataJob(JobCompletionNotificationListener listener, Step prepDbStep, Step transformStep) {
         return jobBuilderFactory.get("KryoToJsonJob")
@@ -121,15 +108,14 @@ public class BatchConfiguration {
 	
     @Bean
     public Step transformStep(ItemReader<Entity> reader, ItemProcessor<Entity, JsonWrapper> processor,
-    		ItemWriter<JsonWrapper> writer, TaskExecutor taskExecutor, ProcessorListener listener) {
+    		ItemWriter<JsonWrapper> writer, ProcessorListener listener) {
         return stepBuilderFactory.get("stepTransform")
-                .<Entity, JsonWrapper> chunk(1)
+                .<Entity, JsonWrapper> chunk(chunkSize)
                 .faultTolerant()
                 .reader(reader)
                 .processor(processor)
                 .writer(writer)
                 .listener(listener)
-                .taskExecutor(taskExecutor)
                 .build();
     }
     

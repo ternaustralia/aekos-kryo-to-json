@@ -15,9 +15,13 @@ if [ -z "$pass" ];then
 fi
 shift
 shift
+fetchSize=5000
+chunkSize=1000
 args="--kryo-crawler.jdbc.url=jdbc:postgresql:aekos"
 args="$args,--kryo-crawler.jdbc.user=$user"
 args="$args,--kryo-crawler.jdbc.password=$pass"
+args="$args,--kryo-crawler.jdbc.fetch-size=$fetchSize"
+args="$args,--kryo-crawler.chunk-size=$chunkSize"
 mvn clean spring-boot:run \
  -Drun.arguments=$args \
  $@

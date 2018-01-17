@@ -7,6 +7,7 @@ mkdir -p $LOGS_DIR
 
 user=$1
 pass=$2
+url=jdbc:postgresql:aekos # TODO make param
 if [ -z "$user" ];then
   echo "[ERROR] you need to pass the DB username as the first arg"
   echo $USAGE_MSG
@@ -28,7 +29,8 @@ fi
 
 java -Xms256m -Xmx5G $HEAP_DUMP_FRAGMENT $DEBUG_FRAGMENT -noverify \
  -jar $jar \
- --kryo-crawler.jdbc.url=jdbc:postgresql:aekos \
- --kryo-crawler.jdbc.user=$user \
- --kryo-crawler.jdbc.password=$pass 2>&1 | tee $LOGS_DIR/kryo_crawler_$UNIQUE_ID-$PART_NAME.log
+ --kryo-crawler.jdbc.url="$url" \
+ --kryo-crawler.jdbc.user="$user" \
+ --kryo-crawler.jdbc.password="$pass" \
+ 2>&1 | tee $LOGS_DIR/kryo_crawler_$UNIQUE_ID.log
 
