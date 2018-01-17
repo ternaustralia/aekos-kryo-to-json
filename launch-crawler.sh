@@ -26,11 +26,15 @@ if [ -z $jar ]; then
   echo "[ERROR] couldn't find JAR file, exiting"
   exit 1
 fi
+fetchSize=5000
+chunkSize=1000
 
 java -Xms256m -Xmx5G $HEAP_DUMP_FRAGMENT $DEBUG_FRAGMENT -noverify \
  -jar $jar \
  --kryo-crawler.jdbc.url="$url" \
  --kryo-crawler.jdbc.user="$user" \
  --kryo-crawler.jdbc.password="$pass" \
+ --kryo-crawler.jdbc.fetch-size="$fetchSize" \
+ --kryo-crawler.chunk-size="$chunkSize" \
  2>&1 | tee $LOGS_DIR/kryo_crawler_$UNIQUE_ID.log
 

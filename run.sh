@@ -22,7 +22,7 @@ args="$args,--kryo-crawler.jdbc.user=$user"
 args="$args,--kryo-crawler.jdbc.password=$pass"
 args="$args,--kryo-crawler.jdbc.fetch-size=$fetchSize"
 args="$args,--kryo-crawler.chunk-size=$chunkSize"
-mvn clean spring-boot:run \
+./mvnw clean spring-boot:run \
  -Drun.arguments=$args \
  $@
 
