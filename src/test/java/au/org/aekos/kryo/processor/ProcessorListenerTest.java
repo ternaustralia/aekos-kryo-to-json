@@ -15,6 +15,7 @@ public class ProcessorListenerTest {
 	@Test
 	public void testGetProcessedCounter01() {
 		ProcessorListener objectUnderTest = new ProcessorListener();
+		setValue(objectUnderTest, "processedLogThreshold", 10);
 		objectUnderTest.afterProcess(null, null);
 		objectUnderTest.afterProcess(null, null);
 		int result = objectUnderTest.getProcessedCounter();
@@ -25,28 +26,29 @@ public class ProcessorListenerTest {
 	 * Test the progress message.
 	 */
 	@Test
-	public void testGetProcesseunter01() throws NoSuchFieldException, Throwable {
+	public void testGetProcesseunter01() {
 		ProcessorListener objectUnderTest = new ProcessorListener();
 		
-		Field isStartRecorded = ProcessorListener.class.getDeclaredField("isStartRecorded");
-		isStartRecorded.setAccessible(true);
-		isStartRecorded.set(objectUnderTest, true);
-		Field startMs = ProcessorListener.class.getDeclaredField("startMs");
-		startMs.setAccessible(true);
-		startMs.set(objectUnderTest, 1516163067016l);
-		Field processedLogThreshold = ProcessorListener.class.getDeclaredField("processedLogThreshold");
-		processedLogThreshold.setAccessible(true);
-		processedLogThreshold.set(objectUnderTest, 1);
-		Field isTotalCounted = ProcessorListener.class.getDeclaredField("isTotalCounted");
-		isTotalCounted.setAccessible(true);
-		isTotalCounted.set(objectUnderTest, true);
-		Field totalRecords = ProcessorListener.class.getDeclaredField("totalRecords");
-		totalRecords.setAccessible(true);
-		totalRecords.set(objectUnderTest, 3);
+		setValue(objectUnderTest, "isStartRecorded", true);
+		setValue(objectUnderTest, "startMs", 1516163067016l);
+		setValue(objectUnderTest, "processedLogThreshold", 1);
+		setValue(objectUnderTest, "isTotalCounted", true);
+		setValue(objectUnderTest, "totalRecords", 3);
 		
 		objectUnderTest.afterProcess(null, null);
 		objectUnderTest.afterProcess(null, null);
 		objectUnderTest.afterProcess(null, null);
 		// nothing to assert, just look at the console. This is a terrible unit test :(
+	}
+
+	private void setValue(ProcessorListener objectUnderTest, String fieldName, Object value) {
+		try {
+			Field totalRecords = ProcessorListener.class.getDeclaredField(fieldName);
+			totalRecords.setAccessible(true);
+			totalRecords.set(objectUnderTest, value);
+		} catch (Throwable t) {
+			String template = "Failed to set field %s to '%s'";
+			throw new RuntimeException(String.format(template, fieldName, value), t);
+		}
 	}
 }
