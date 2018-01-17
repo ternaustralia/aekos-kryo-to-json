@@ -1,0 +1,10 @@
+{
+	"id": "au.org.aekos.kryo.processor.SomeType:T1234",
+	"type": "au.org.aekos.kryo.processor.SomeType",
+	"data": {
+		"foo": "bar",
+		"isfoo": true,
+		"foocount": 33,
+		"foostart": 1516148847034
+	}
+}

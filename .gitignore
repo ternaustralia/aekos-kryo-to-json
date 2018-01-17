@@ -1,0 +1,8 @@
+/target
+/.classpath
+/.project
+/META-INF
+.settings
+/bin
+/logs
+jobrepo/

@@ -1,0 +1,7 @@
+{
+	"id": "au.org.aekos.kryo.processor.SomeType:T1234",
+	"type": "au.org.aekos.kryo.processor.SomeType",
+	"data": {
+		"parent":"<OTHER:T222>"
+	}
+}
