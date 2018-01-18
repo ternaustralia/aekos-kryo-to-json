@@ -15,7 +15,7 @@ if [ -z "$pass" ];then
 fi
 shift
 shift
-fetchSize=5000
+fetchSize=0
 chunkSize=1000
 args="--kryo-crawler.jdbc.url=jdbc:postgresql:aekos"
 args="$args,--kryo-crawler.jdbc.user=$user"

@@ -39,7 +39,7 @@ public class EntityProcessorTest {
 		Entity e = new Entity(SomeType.class, new EntityReferenceIdentifier("au.org.aekos.kryo.processor.SomeType:T1234"));
 		JsonWrapper result = objectUnderTest.process(e);
 		assertThat(result.getEntityId(), is("au.org.aekos.kryo.processor.SomeType:T1234"));
-		assertJsonEquals(result.getJson(), "{\"id\":\"au.org.aekos.kryo.processor.SomeType:T1234\",\"type\":\"au.org.aekos.kryo.processor.SomeType\",\"data\":{}}");
+		assertJsonEquals(result.getJson(), "{\"id\":\"SomeType:T1234\",\"type\":\"au.org.aekos.kryo.processor.SomeType\",\"data\":{}}");
 	}
 	
 	/**

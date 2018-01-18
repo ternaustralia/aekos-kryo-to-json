@@ -52,7 +52,8 @@ public class EntityProcessor implements ItemProcessor<Entity, JsonWrapper> {
 				Object value = new ProxyModelSupport().extractValue(curr.getValue());
 				theData.put(predicate, value);
 			}
-			return new EntityWrapper(e.getId(), e.getType(), theData);
+			String simpleId = e.getEntityReference().getSimpleIdentifierKey();
+			return new EntityWrapper(simpleId, e.getType(), theData);
 		}
 	}
 }
